@@ -37,3 +37,4 @@ tests:
     - hspec
     - QuickCheck
     - genvalidity-hspec
+    - genvalidity-time
