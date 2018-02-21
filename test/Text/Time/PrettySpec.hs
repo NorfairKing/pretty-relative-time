@@ -59,3 +59,16 @@ spec = do
             renderTimeAgoAuto (TimeAgo LT 0 0 7 0 0) `shouldBe` "in 7 minutes"
             renderTimeAgoAuto (TimeAgo LT 0 0 0 8 0) `shouldBe` "in 8 seconds"
             renderTimeAgoAuto (TimeAgo LT 0 0 0 0 9) `shouldBe` "just now"
+
+        it "handles singular nouns well" $ do
+            renderTimeAgoAuto (TimeAgo GT 1 0 0 0 0) `shouldBe` "1 day ago"
+            renderTimeAgoAuto (TimeAgo GT 0 1 0 0 0) `shouldBe` "1 hour ago"
+            renderTimeAgoAuto (TimeAgo GT 0 0 1 0 0) `shouldBe` "1 minute ago"
+            renderTimeAgoAuto (TimeAgo GT 0 0 0 1 0) `shouldBe` "1 second ago"
+            renderTimeAgoAuto (TimeAgo GT 0 0 0 0 1) `shouldBe` "just now"
+            renderTimeAgoAuto (TimeAgo EQ 0 0 0 0 0) `shouldBe` "just now"
+            renderTimeAgoAuto (TimeAgo LT 1 0 0 0 0) `shouldBe` "in 1 day"
+            renderTimeAgoAuto (TimeAgo LT 0 1 0 0 0) `shouldBe` "in 1 hour"
+            renderTimeAgoAuto (TimeAgo LT 0 0 1 0 0) `shouldBe` "in 1 minute"
+            renderTimeAgoAuto (TimeAgo LT 0 0 0 1 0) `shouldBe` "in 1 second"
+            renderTimeAgoAuto (TimeAgo LT 0 0 0 0 1) `shouldBe` "just now"
