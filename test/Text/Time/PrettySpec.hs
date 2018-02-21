@@ -45,3 +45,17 @@ spec = do
                 (const [])
         it "is the inverse of timeAgo" $
             inverseFunctionsOnValid timeAgoToDiffTime timeAgo
+    describe "renderTimeAgoAuto" $ do
+        it "produces valid Strings's" $ producesValidsOnValids renderTimeAgoAuto
+        it "renders these simple examples well" $ do
+            renderTimeAgoAuto (TimeAgo GT 5 0 0 0 0) `shouldBe` "5 days ago"
+            renderTimeAgoAuto (TimeAgo GT 0 6 0 0 0) `shouldBe` "6 hours ago"
+            renderTimeAgoAuto (TimeAgo GT 0 0 7 0 0) `shouldBe` "7 minutes ago"
+            renderTimeAgoAuto (TimeAgo GT 0 0 0 8 0) `shouldBe` "8 seconds ago"
+            renderTimeAgoAuto (TimeAgo GT 0 0 0 0 9) `shouldBe` "just now"
+            renderTimeAgoAuto (TimeAgo EQ 0 0 0 0 0) `shouldBe` "just now"
+            renderTimeAgoAuto (TimeAgo LT 5 0 0 0 0) `shouldBe` "in 5 days"
+            renderTimeAgoAuto (TimeAgo LT 0 6 0 0 0) `shouldBe` "in 6 hours"
+            renderTimeAgoAuto (TimeAgo LT 0 0 7 0 0) `shouldBe` "in 7 minutes"
+            renderTimeAgoAuto (TimeAgo LT 0 0 0 8 0) `shouldBe` "in 8 seconds"
+            renderTimeAgoAuto (TimeAgo LT 0 0 0 0 9) `shouldBe` "just now"
