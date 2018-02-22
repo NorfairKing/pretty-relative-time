@@ -1,7 +1,7 @@
 name:                pretty-relative-time
 version:             0.0.0.0
 github:              "NorfairKing/pretty-relative-time"
-license:             AllRightsReserved
+license:             MIT
 author:              "Tom Sydney Kerckhove"
 maintainer:          "syd.kerckhove@gmail.com"
 copyright:           "Copyright: (c) 2018 Tom Sydney Kerckhove"
@@ -10,6 +10,8 @@ extra-source-files:
 - README.md
 - ChangeLog.md
 
+synopsis:            Pretty relative time
+category:            Time
 description:         Please see the README on Github at <https://github.com/NorfairKing/pretty-relative-time#readme>
 
 dependencies:
