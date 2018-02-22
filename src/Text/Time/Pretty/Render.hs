@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -14,7 +13,9 @@ renderTimeAgoAuto TimeAgo {..} =
         GT ->
             if | daysAgo > 0 ->
                    unwords [show daysAgo, plural daysAgo "day" "days", "ago"]
-               | hoursAgo > 0 -> unwords [show hoursAgo, plural hoursAgo "hour" "hours", "ago"]
+               | hoursAgo > 0 ->
+                   unwords
+                       [show hoursAgo, plural hoursAgo "hour" "hours", "ago"]
                | minutesAgo > 0 ->
                    unwords
                        [ show minutesAgo

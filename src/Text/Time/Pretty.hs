@@ -1,17 +1,14 @@
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE RecordWildCards #-}
-
 module Text.Time.Pretty
     ( prettyTimeAutoFromNow
     , prettyTimeAuto
     -- Helper functions
     , timeAgo
     , timeAgoToDiffTime
-    -- ^ Helper Types
+    -- * Helper Types
     , TimeAgo(..)
-    -- ^ Rendering
+    -- * Rendering
     , renderTimeAgoAuto
-    -- ^ Constants
+    -- * Constants
     , picoSecondsPerSecond
     , secondsPerMinute
     , minutesPerHour

@@ -72,12 +72,12 @@ timeAgo dt = TimeAgo {..}
     totalMinutesAgo = floor $ absDt / fromIntegral (secondsPerMinute :: Integer)
     totalHoursAgo =
         floor $
-        absDt / (fromIntegral (minutesPerHour * secondsPerMinute :: Integer))
+        absDt / fromIntegral (minutesPerHour * secondsPerMinute :: Integer)
     totalDaysAgo =
         floor $
         absDt /
-        (fromIntegral
-             (hoursPerDay * minutesPerHour * secondsPerMinute :: Integer))
+        fromIntegral
+            (hoursPerDay * minutesPerHour * secondsPerMinute :: Integer)
     absDt = abs dt
 
 timeAgoToDiffTime :: TimeAgo -> NominalDiffTime
@@ -87,7 +87,7 @@ timeAgoToDiffTime TimeAgo {..} =
     (case signAgo of
          EQ -> const 0
          GT -> id
-         LT -> negate) $
-    (picoSecondsAgo +
-     picoSecondsPerSecond *
-     (secondsAgo + 60 * (minutesAgo + 60 * (hoursAgo + 24 * daysAgo))))
+         LT -> negate)
+        (picoSecondsAgo +
+         picoSecondsPerSecond *
+         (secondsAgo + 60 * (minutesAgo + 60 * (hoursAgo + 24 * daysAgo))))
