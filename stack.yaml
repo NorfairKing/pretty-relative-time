@@ -6,8 +6,12 @@ extra-deps:
   commit: a86dd3e4830c14c056a0d5d8712864d395d25b2a
   subdirs:
     - validity
+    - validity-path
     - validity-time
     - genvalidity
     - genvalidity-time
     - genvalidity-property
     - genvalidity-hspec
+- hlint-2.0.15
+- extra-1.6.5
+- zifter-0.0.1.8
