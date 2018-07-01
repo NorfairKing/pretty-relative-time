@@ -101,4 +101,4 @@ timeAgoToDiffTime TimeAgo {..} =
          LT -> negate)
         (picoSecondsAgo +
          picoSecondsPerSecond *
-         (secondsAgo + 60 * (minutesAgo + 60 * (hoursAgo + 24 *( daysAgo + 7 * weeksAgo ) ))))
+         (secondsAgo + 60 * (minutesAgo + 60 * (hoursAgo + 24 *( daysAgo + 7 * weeksAgo )))))
