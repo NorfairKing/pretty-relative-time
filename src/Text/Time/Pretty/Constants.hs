@@ -3,6 +3,7 @@ module Text.Time.Pretty.Constants
     , secondsPerMinute
     , minutesPerHour
     , hoursPerDay
+    , daysPerWeek
     ) where
 
 picoSecondsPerSecond :: Integral a => a
@@ -16,3 +17,6 @@ minutesPerHour = 60
 
 hoursPerDay :: Integral a => a
 hoursPerDay = 24
+
+daysPerWeek :: Integral a => a
+daysPerWeek = 7
