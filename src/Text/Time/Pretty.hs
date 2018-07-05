@@ -13,6 +13,7 @@ module Text.Time.Pretty
     , secondsPerMinute
     , minutesPerHour
     , hoursPerDay
+    , daysPerWeek
     ) where
 
 import Data.Time

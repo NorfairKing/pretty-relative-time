@@ -15,6 +15,7 @@ import Text.Time.Pretty.Constants
 
 data TimeAgo = TimeAgo
     { signAgo :: Ordering
+    , weeksAgo :: Integer
     , daysAgo :: Integer
     , hoursAgo :: Integer
     , minutesAgo :: Integer
@@ -29,7 +30,8 @@ instance Validity TimeAgo where
                   (case signAgo of
                        EQ ->
                            and
-                               [ daysAgo == 0
+                               [ weeksAgo == 0
+                               , daysAgo == 0
                                , hoursAgo == 0
                                , minutesAgo == 0
                                , secondsAgo == 0
@@ -38,13 +40,16 @@ instance Validity TimeAgo where
                        _ ->
                            any
                                (> 0)
-                               [ daysAgo
+                               [ weeksAgo
+                               , daysAgo
                                , hoursAgo
                                , minutesAgo
                                , secondsAgo
                                , picoSecondsAgo
                                ])
                   "the sign makes sense"
+            , check (weeksAgo >= 0) "weeks are positive"
+            , check (daysAgo < daysPerWeek) "days < 7"
             , check (daysAgo >= 0) "days are positive"
             , check (hoursAgo < hoursPerDay) "hours < 24"
             , check (hoursAgo >= 0) "hours are positive"
@@ -65,7 +70,8 @@ timeAgo dt = TimeAgo {..}
     secondsAgo = totalSecondsAgo - secondsPerMinute * totalMinutesAgo
     minutesAgo = totalMinutesAgo - minutesPerHour * totalHoursAgo
     hoursAgo = totalHoursAgo - hoursPerDay * totalDaysAgo
-    daysAgo = totalDaysAgo
+    daysAgo = totalDaysAgo - daysPerWeek * totalWeeksAgo
+    weeksAgo = totalWeeksAgo
     totalPicoSecondsAgo =
         floor $ absDt * fromIntegral (picoSecondsPerSecond :: Integer)
     totalSecondsAgo = floor absDt :: Integer
@@ -78,6 +84,11 @@ timeAgo dt = TimeAgo {..}
         absDt /
         fromIntegral
             (hoursPerDay * minutesPerHour * secondsPerMinute :: Integer)
+    totalWeeksAgo =
+        floor $
+        absDt /
+        fromIntegral
+            (daysPerWeek * hoursPerDay * minutesPerHour * secondsPerMinute :: Integer)
     absDt = abs dt
 
 timeAgoToDiffTime :: TimeAgo -> NominalDiffTime
@@ -90,4 +101,4 @@ timeAgoToDiffTime TimeAgo {..} =
          LT -> negate)
         (picoSecondsAgo +
          picoSecondsPerSecond *
-         (secondsAgo + 60 * (minutesAgo + 60 * (hoursAgo + 24 * daysAgo))))
+         (secondsAgo + 60 * (minutesAgo + 60 * (hoursAgo + 24 *( daysAgo + 7 * weeksAgo )))))

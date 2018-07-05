@@ -11,7 +11,9 @@ renderTimeAgoAuto :: TimeAgo -> String
 renderTimeAgoAuto TimeAgo {..} =
     case signAgo of
         GT ->
-            if | daysAgo > 0 ->
+            if | weeksAgo > 0 ->
+                   unwords [show weeksAgo, plural weeksAgo "week" "weeks", "ago"]
+               | daysAgo > 0 ->
                    unwords [show daysAgo, plural daysAgo "day" "days", "ago"]
                | hoursAgo > 0 ->
                    unwords
@@ -31,7 +33,9 @@ renderTimeAgoAuto TimeAgo {..} =
                | otherwise -> "just now"
         EQ -> "just now"
         LT ->
-            if | daysAgo > 0 ->
+            if | weeksAgo > 0 ->
+                   unwords ["in", show weeksAgo, plural weeksAgo "week" "weeks"]
+               | daysAgo > 0 ->
                    unwords ["in", show daysAgo, plural daysAgo "day" "days"]
                | hoursAgo > 0 ->
                    unwords ["in", show hoursAgo, plural hoursAgo "hour" "hours"]
