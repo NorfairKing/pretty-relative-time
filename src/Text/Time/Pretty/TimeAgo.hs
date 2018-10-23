@@ -23,37 +23,37 @@ data TimeAgo = TimeAgo
     } deriving (Show, Eq, Generic)
 
 instance Validity TimeAgo where
-    isValid = isValidByValidating
     validate TimeAgo {..} =
         mconcat
-            [ (case signAgo of
-                   EQ ->
-                       and
-                           [ daysAgo == 0
-                           , hoursAgo == 0
-                           , minutesAgo == 0
-                           , secondsAgo == 0
-                           , picoSecondsAgo == 0
-                           ]
-                   _ ->
-                       any
-                           (> 0)
-                           [ daysAgo
-                           , hoursAgo
-                           , minutesAgo
-                           , secondsAgo
-                           , picoSecondsAgo
-                           ]) <?@>
-              "the sign makes sense"
-            , (daysAgo >= 0) <?@> "days are positive"
-            , (hoursAgo < hoursPerDay) <?@> "hours < 24"
-            , (hoursAgo >= 0) <?@> "hours are positive"
-            , (minutesAgo < minutesPerHour) <?@> "minutes < 60"
-            , (minutesAgo >= 0) <?@> "minutes are positive"
-            , (secondsAgo < secondsPerMinute) <?@> "seconds < 60"
-            , (secondsAgo >= 0) <?@> "seconds are positive"
-            , (picoSecondsAgo < picoSecondsPerSecond) <?@> "picoseconds < 1E12"
-            , (picoSecondsAgo >= 0) <?@> "picoseconds are positive"
+            [ check
+                  (case signAgo of
+                       EQ ->
+                           and
+                               [ daysAgo == 0
+                               , hoursAgo == 0
+                               , minutesAgo == 0
+                               , secondsAgo == 0
+                               , picoSecondsAgo == 0
+                               ]
+                       _ ->
+                           any
+                               (> 0)
+                               [ daysAgo
+                               , hoursAgo
+                               , minutesAgo
+                               , secondsAgo
+                               , picoSecondsAgo
+                               ])
+                  "the sign makes sense"
+            , check (daysAgo >= 0) "days are positive"
+            , check (hoursAgo < hoursPerDay) "hours < 24"
+            , check (hoursAgo >= 0) "hours are positive"
+            , check (minutesAgo < minutesPerHour) "minutes < 60"
+            , check (minutesAgo >= 0) "minutes are positive"
+            , check (secondsAgo < secondsPerMinute) "seconds < 60"
+            , check (secondsAgo >= 0) "seconds are positive"
+            , check (picoSecondsAgo < picoSecondsPerSecond) "picoseconds < 1E12"
+            , check (picoSecondsAgo >= 0) "picoseconds are positive"
             ]
 
 timeAgo :: NominalDiffTime -> TimeAgo
