@@ -1,0 +1,15 @@
+- entry: Features
+  forest:
+  - Deal with weeks as well
+  - header: Deal with months as well
+    contents: It's not clear how the problem of different length months should be
+      dealt with.
+  - Deal with years as well
+  - Show 'today' next to the date if it's the same day
+  - Show 'tomorrow' next to the date if it is tomorrow
+  - Show 'yesterday' next to the date if it is yesterday
+  - Show 'Last week' if that's true
+  - Show 'Next week' if that's true
+- entry: Bugs
+  forest:
+  - (-9 minutes ago)
