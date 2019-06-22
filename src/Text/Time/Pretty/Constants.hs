@@ -1,9 +1,10 @@
 module Text.Time.Pretty.Constants
-    ( picoSecondsPerSecond
-    , secondsPerMinute
-    , minutesPerHour
-    , hoursPerDay
-    ) where
+  ( picoSecondsPerSecond
+  , secondsPerMinute
+  , minutesPerHour
+  , hoursPerDay
+  , daysPerWeek
+  ) where
 
 picoSecondsPerSecond :: Integral a => a
 picoSecondsPerSecond = 10 ^ (12 :: Integer)
@@ -16,3 +17,6 @@ minutesPerHour = 60
 
 hoursPerDay :: Integral a => a
 hoursPerDay = 24
+
+daysPerWeek :: Integral a => a
+daysPerWeek = 7
