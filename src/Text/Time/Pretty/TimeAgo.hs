@@ -62,13 +62,13 @@ daysAgoToDays DaysAgo {..} =
 
 data TimeAgo =
   TimeAgo
-    { signAgo :: !Ordering
-    , weeksAgo :: !Integer
-    , daysAgo :: !Integer
-    , hoursAgo :: !Integer
-    , minutesAgo :: !Integer
-    , secondsAgo :: !Integer
-    , picoSecondsAgo :: !Integer
+    { timeAgoSign :: !Ordering
+    , timeAgoWeeks :: !Integer
+    , timeAgoDays :: !Integer
+    , timeAgoHours :: !Integer
+    , timeAgoMinutes :: !Integer
+    , timeAgoSeconds :: !Integer
+    , timeAgoPicoSeconds :: !Integer
     }
   deriving (Show, Eq, Generic)
 
@@ -76,41 +76,50 @@ instance Validity TimeAgo where
   validate TimeAgo {..} =
     mconcat
       [ check
-          (case signAgo of
+          (case timeAgoSign of
              EQ ->
                and
-                 [ weeksAgo == 0
-                 , daysAgo == 0
-                 , hoursAgo == 0
-                 , minutesAgo == 0
-                 , secondsAgo == 0
-                 , picoSecondsAgo == 0
+                 [ timeAgoWeeks == 0
+                 , timeAgoDays == 0
+                 , timeAgoHours == 0
+                 , timeAgoMinutes == 0
+                 , timeAgoSeconds == 0
+                 , timeAgoPicoSeconds == 0
                  ]
-             _ -> any (> 0) [weeksAgo, daysAgo, hoursAgo, minutesAgo, secondsAgo, picoSecondsAgo])
+             _ ->
+               any
+                 (> 0)
+                 [ timeAgoWeeks
+                 , timeAgoDays
+                 , timeAgoHours
+                 , timeAgoMinutes
+                 , timeAgoSeconds
+                 , timeAgoPicoSeconds
+                 ])
           "the sign makes sense"
-      , check (weeksAgo >= 0) "weeks are positive"
-      , check (daysAgo < daysPerWeek) "days < 7"
-      , check (daysAgo >= 0) "days are positive"
-      , check (hoursAgo < hoursPerDay) "hours < 24"
-      , check (hoursAgo >= 0) "hours are positive"
-      , check (minutesAgo < minutesPerHour) "minutes < 60"
-      , check (minutesAgo >= 0) "minutes are positive"
-      , check (secondsAgo < secondsPerMinute) "seconds < 60"
-      , check (secondsAgo >= 0) "seconds are positive"
-      , check (picoSecondsAgo < picoSecondsPerSecond) "picoseconds < 1E12"
-      , check (picoSecondsAgo >= 0) "picoseconds are positive"
+      , check (timeAgoWeeks >= 0) "weeks are positive"
+      , check (timeAgoDays < daysPerWeek) "days < 7"
+      , check (timeAgoDays >= 0) "days are positive"
+      , check (timeAgoHours < hoursPerDay) "hours < 24"
+      , check (timeAgoHours >= 0) "hours are positive"
+      , check (timeAgoMinutes < minutesPerHour) "minutes < 60"
+      , check (timeAgoMinutes >= 0) "minutes are positive"
+      , check (timeAgoSeconds < secondsPerMinute) "seconds < 60"
+      , check (timeAgoSeconds >= 0) "seconds are positive"
+      , check (timeAgoPicoSeconds < picoSecondsPerSecond) "picoseconds < 1E12"
+      , check (timeAgoPicoSeconds >= 0) "picoseconds are positive"
       ]
 
 timeAgo :: NominalDiffTime -> TimeAgo
 timeAgo dt = TimeAgo {..}
   where
-    signAgo = compare dt 0
-    picoSecondsAgo = totalPicoSecondsAgo - picoSecondsPerSecond * totalSecondsAgo
-    secondsAgo = totalSecondsAgo - secondsPerMinute * totalMinutesAgo
-    minutesAgo = totalMinutesAgo - minutesPerHour * totalHoursAgo
-    hoursAgo = totalHoursAgo - hoursPerDay * totalDaysAgo
-    daysAgo = totalDaysAgo - daysPerWeek * totalWeeksAgo
-    weeksAgo = totalWeeksAgo
+    timeAgoSign = compare dt 0
+    timeAgoPicoSeconds = totalPicoSecondsAgo - picoSecondsPerSecond * totalSecondsAgo
+    timeAgoSeconds = totalSecondsAgo - secondsPerMinute * totalMinutesAgo
+    timeAgoMinutes = totalMinutesAgo - minutesPerHour * totalHoursAgo
+    timeAgoHours = totalHoursAgo - hoursPerDay * totalDaysAgo
+    timeAgoDays = totalDaysAgo - daysPerWeek * totalWeeksAgo
+    timeAgoWeeks = totalWeeksAgo
     totalPicoSecondsAgo = floor $ absDt * fromIntegral (picoSecondsPerSecond :: Integer)
     totalSecondsAgo = floor absDt :: Integer
     totalMinutesAgo = floor $ absDt / fromIntegral (secondsPerMinute :: Integer)
@@ -127,9 +136,13 @@ timeAgoToDiffTime :: TimeAgo -> NominalDiffTime
 timeAgoToDiffTime TimeAgo {..} =
   (/ fromIntegral (picoSecondsPerSecond :: Integer)) $
   realToFrac $
-  (case signAgo of
+  (case timeAgoSign of
      EQ -> const 0
      GT -> id
      LT -> negate)
-    (picoSecondsAgo +
-     picoSecondsPerSecond * (secondsAgo + secondsPerMinute * (minutesAgo + minutesPerHour * (hoursAgo + hoursPerDay * (daysAgo + daysPerWeek * weeksAgo)))))
+    (timeAgoPicoSeconds +
+     picoSecondsPerSecond *
+     (timeAgoSeconds +
+      secondsPerMinute *
+      (timeAgoMinutes +
+       minutesPerHour * (timeAgoHours + hoursPerDay * (timeAgoDays + daysPerWeek * timeAgoWeeks)))))

@@ -3,7 +3,9 @@ module Text.Time.Pretty.Constants
   , secondsPerMinute
   , minutesPerHour
   , hoursPerDay
-  , daysPerWeek,approximateDaysPerMonth, approximateDaysPerYear
+  , daysPerWeek
+  , approximateDaysPerMonth
+  , approximateDaysPerYear
   ) where
 
 picoSecondsPerSecond :: Integral a => a

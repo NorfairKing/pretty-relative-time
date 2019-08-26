@@ -33,21 +33,27 @@ renderDaysAgoAuto DaysAgo {..} =
 
 renderTimeAgoAuto :: TimeAgo -> String
 renderTimeAgoAuto TimeAgo {..} =
-  case signAgo of
+  case timeAgoSign of
     GT ->
-      if | weeksAgo > 0 -> unwords [show weeksAgo, plural weeksAgo "week" "weeks", "ago"]
-         | daysAgo > 0 -> unwords [show daysAgo, plural daysAgo "day" "days", "ago"]
-         | hoursAgo > 0 -> unwords [show hoursAgo, plural hoursAgo "hour" "hours", "ago"]
-         | minutesAgo > 0 -> unwords [show minutesAgo, plural minutesAgo "minute" "minutes", "ago"]
-         | secondsAgo > 0 -> unwords [show secondsAgo, plural secondsAgo "second" "seconds", "ago"]
+      if | timeAgoWeeks > 0 ->
+           unwords [show timeAgoWeeks, plural timeAgoWeeks "week" "weeks", "ago"]
+         | timeAgoDays > 0 -> unwords [show timeAgoDays, plural timeAgoDays "day" "days", "ago"]
+         | timeAgoHours > 0 ->
+           unwords [show timeAgoHours, plural timeAgoHours "hour" "hours", "ago"]
+         | timeAgoMinutes > 0 ->
+           unwords [show timeAgoMinutes, plural timeAgoMinutes "minute" "minutes", "ago"]
+         | timeAgoSeconds > 0 ->
+           unwords [show timeAgoSeconds, plural timeAgoSeconds "second" "seconds", "ago"]
          | otherwise -> "just now"
     EQ -> "just now"
     LT ->
-      if | weeksAgo > 0 -> unwords ["in", show weeksAgo, plural weeksAgo "week" "weeks"]
-         | daysAgo > 0 -> unwords ["in", show daysAgo, plural daysAgo "day" "days"]
-         | hoursAgo > 0 -> unwords ["in", show hoursAgo, plural hoursAgo "hour" "hours"]
-         | minutesAgo > 0 -> unwords ["in", show minutesAgo, plural minutesAgo "minute" "minutes"]
-         | secondsAgo > 0 -> unwords ["in", show secondsAgo, plural secondsAgo "second" "seconds"]
+      if | timeAgoWeeks > 0 -> unwords ["in", show timeAgoWeeks, plural timeAgoWeeks "week" "weeks"]
+         | timeAgoDays > 0 -> unwords ["in", show timeAgoDays, plural timeAgoDays "day" "days"]
+         | timeAgoHours > 0 -> unwords ["in", show timeAgoHours, plural timeAgoHours "hour" "hours"]
+         | timeAgoMinutes > 0 ->
+           unwords ["in", show timeAgoMinutes, plural timeAgoMinutes "minute" "minutes"]
+         | timeAgoSeconds > 0 ->
+           unwords ["in", show timeAgoSeconds, plural timeAgoSeconds "second" "seconds"]
          | otherwise -> "just now"
 
 plural :: Integral a => a -> String -> String -> String
