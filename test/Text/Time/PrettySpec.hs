@@ -2,8 +2,8 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Text.Time.PrettySpec
-    ( spec
-    ) where
+  ( spec
+  ) where
 
 import Data.GenValidity.Time ()
 import Test.Hspec
@@ -31,9 +31,7 @@ instance GenValid TimeAgo where
     case sign of
       EQ -> pure $ TimeAgo EQ 0 0 0 0 0 0
       _ ->
-        (TimeAgo sign <$> (abs <$> genValid) <*>
-         choose (0, daysPerWeek) <*>
-         choose (0, hoursPerDay) <*>
+        (TimeAgo sign <$> (abs <$> genValid) <*> choose (0, daysPerWeek) <*> choose (0, hoursPerDay) <*>
          choose (0, minutesPerHour) <*>
          choose (0, secondsPerMinute) <*>
          choose (0, picoSecondsPerSecond)) `suchThat`
@@ -41,20 +39,20 @@ instance GenValid TimeAgo where
 
 spec :: Spec
 spec = do
-  eqSpec @TimeAgo
-  genValidSpec @TimeAgo
-  describe "timeAgo" $ do
-    it "produces valid TimeAgo's" $ producesValidsOnValids timeAgo
-    it "is the inverse of timeAgoToDiffTime" $ inverseFunctionsOnValid timeAgo timeAgoToDiffTime
-  describe "timeAgoToDiffTime" $ do
-    it "produces valid DiffTime's" $ producesValidsOnValids timeAgo
-    it "is the inverse of timeAgo for just picoseconds" $
+  eqSpec @DaysAgo
+  genValidSpec @DaysAgo
+  describe "daysAgo" $ do
+    it "produces valid TimeAgo's" $ producesValidsOnValids daysAgo
+    it "is the inverse of daysAgoToDays" $ inverseFunctionsOnValid daysAgo daysAgoToDays
+  describe "daysAgoToDays" $ do
+    it "produces valid DiffTime's" $ producesValidsOnValids daysAgo
+    it "is the inverse of daysAgo for just days" $
       inverseFunctionsOnGen
-        timeAgoToDiffTime
-        timeAgo
-        ((TimeAgo GT 0 0 0 0 0 <$> genValid) `suchThat` isValid)
+        daysAgoToDays
+        daysAgo
+        (((\d -> DaysAgo GT 0 d 0 0) <$> genValid) `suchThat` isValid)
         (const [])
-    it "is the inverse of timeAgo" $ inverseFunctionsOnValid timeAgoToDiffTime timeAgo
+    it "is the inverse of daysAgo" $ inverseFunctionsOnValid daysAgoToDays daysAgo
   describe "renderDaysAgoAuto" $ do
     it "produces valid Strings's" $ producesValidsOnValids renderDaysAgoAuto
     let i da s = it (unwords ["Renders", show da, "as", show s]) $ renderDaysAgoAuto da `shouldBe` s
@@ -79,6 +77,20 @@ spec = do
       i (DaysAgo LT 0 1 0 0) "in 1 week"
       i (DaysAgo LT 0 0 1 0) "in 1 month"
       i (DaysAgo LT 0 0 0 1) "in 1 year"
+  eqSpec @TimeAgo
+  genValidSpec @TimeAgo
+  describe "timeAgo" $ do
+    it "produces valid TimeAgo's" $ producesValidsOnValids timeAgo
+    it "is the inverse of timeAgoToDiffTime" $ inverseFunctionsOnValid timeAgo timeAgoToDiffTime
+  describe "timeAgoToDiffTime" $ do
+    it "produces valid DiffTime's" $ producesValidsOnValids timeAgo
+    it "is the inverse of timeAgo for just picoseconds" $
+      inverseFunctionsOnGen
+        timeAgoToDiffTime
+        timeAgo
+        ((TimeAgo GT 0 0 0 0 0 <$> genValid) `suchThat` isValid)
+        (const [])
+    it "is the inverse of timeAgo" $ inverseFunctionsOnValid timeAgoToDiffTime timeAgo
   describe "renderTimeAgoAuto" $ do
     it "produces valid Strings's" $ producesValidsOnValids renderTimeAgoAuto
     it "renders these simple examples well" $ do

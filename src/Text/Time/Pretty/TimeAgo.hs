@@ -35,8 +35,14 @@ instance Validity DaysAgo where
              _ -> any (> 0) [daysAgoDays, daysAgoWeeks, daysAgoMonths, daysAgoYears])
           "the sign makes sense"
       , check (daysAgoYears >= 0) "years are positive"
+      , check
+          (daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths < approximateDaysPerYear )
+          "days, weeks and months do not sum to a year"
       , check (daysAgoMonths < 13) "months < 13"
       , check (daysAgoMonths >= 0) "months are positive"
+      , check
+          (daysAgoDays + daysPerWeek * daysAgoWeeks < approximateDaysPerMonth)
+          "days and weeks do not sum to a month"
       , check (daysAgoWeeks < 5) "weeks < 5"
       , check (daysAgoWeeks >= 0) "weeks are positive"
       , check (daysAgoDays < 7) "days < 7"
@@ -58,7 +64,12 @@ daysAgo i = DaysAgo {..}
 
 daysAgoToDays :: DaysAgo -> Integer
 daysAgoToDays DaysAgo {..} =
-  daysAgoDays + 7 * daysAgoWeeks + 12 * daysAgoMonths + 356 * daysAgoYears
+  (case daysAgoSign of
+     EQ -> const 0
+     GT -> id
+     LT -> negate) $
+  daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths +
+  approximateDaysPerYear * daysAgoYears
 
 data TimeAgo =
   TimeAgo
