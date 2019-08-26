@@ -15,11 +15,12 @@ module Text.Time.Pretty
   , renderDaysAgoAuto
   , renderTimeAgoAuto
     -- * Constants
-  , picoSecondsPerSecond
-  , secondsPerMinute
-  , minutesPerHour
-  , hoursPerDay
-  ) where
+    , picoSecondsPerSecond
+    , secondsPerMinute
+    , minutesPerHour
+    , hoursPerDay
+    , daysPerWeek
+    ) where
 
 import Data.Time
 
@@ -29,8 +30,8 @@ import Text.Time.Pretty.TimeAgo
 
 prettyTimeAutoFromNow :: UTCTime -> IO String
 prettyTimeAutoFromNow before = do
-  now <- getCurrentTime
-  pure $ prettyTimeAuto now before
+    now <- getCurrentTime
+    pure $ prettyTimeAuto now before
 
 prettyTimeAuto :: UTCTime -> UTCTime -> String
 prettyTimeAuto now before = renderTimeAgoAuto $ timeAgo $ diffUTCTime now before
