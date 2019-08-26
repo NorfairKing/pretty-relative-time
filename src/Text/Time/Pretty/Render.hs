@@ -35,9 +35,8 @@ renderTimeAgoAuto :: TimeAgo -> String
 renderTimeAgoAuto TimeAgo {..} =
   case timeAgoSign of
     GT ->
-      if | timeAgoWeeks > 0 ->
-           unwords [show timeAgoWeeks, plural timeAgoWeeks "week" "weeks", "ago"]
-         | timeAgoDays > 0 -> unwords [show timeAgoDays, plural timeAgoDays "day" "days", "ago"]
+      if | daysAgoToDays timeAgoDaysAgo > 0 ->
+           renderDaysAgoAuto (timeAgoDaysAgo {daysAgoSign = timeAgoSign})
          | timeAgoHours > 0 ->
            unwords [show timeAgoHours, plural timeAgoHours "hour" "hours", "ago"]
          | timeAgoMinutes > 0 ->
@@ -47,8 +46,8 @@ renderTimeAgoAuto TimeAgo {..} =
          | otherwise -> "just now"
     EQ -> "just now"
     LT ->
-      if | timeAgoWeeks > 0 -> unwords ["in", show timeAgoWeeks, plural timeAgoWeeks "week" "weeks"]
-         | timeAgoDays > 0 -> unwords ["in", show timeAgoDays, plural timeAgoDays "day" "days"]
+      if | daysAgoToDays timeAgoDaysAgo > 0 ->
+           renderDaysAgoAuto (timeAgoDaysAgo {daysAgoSign = timeAgoSign})
          | timeAgoHours > 0 -> unwords ["in", show timeAgoHours, plural timeAgoHours "hour" "hours"]
          | timeAgoMinutes > 0 ->
            unwords ["in", show timeAgoMinutes, plural timeAgoMinutes "minute" "minutes"]
