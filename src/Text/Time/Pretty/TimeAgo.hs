@@ -18,25 +18,33 @@ import Text.Time.Pretty.Constants
 
 data DaysAgo =
   DaysAgo
-    { daysAgoSign :: Ordering
-    , daysAgoDays :: Integer
-    , daysAgoWeeks :: Integer
-    , daysAgoMonths :: Integer
-    , daysAgoYears :: Integer
+    { daysAgoSign :: !Ordering
+    , daysAgoYears :: !Integer
+    , daysAgoMonths :: !Integer
+    , daysAgoWeeks :: !Integer
+    , daysAgoDays :: !Integer
     }
   deriving (Show, Eq, Generic)
 
 instance Validity DaysAgo where
-  validate DaysAgo {..} =
+  validate da@DaysAgo {..} =
     mconcat
-      [ check
+      [ genericValidate da
+      , check
           (case daysAgoSign of
              EQ -> and [daysAgoDays == 0, daysAgoWeeks == 0, daysAgoMonths == 0, daysAgoYears == 0]
              _ -> any (> 0) [daysAgoDays, daysAgoWeeks, daysAgoMonths, daysAgoYears])
           "the sign makes sense"
       , check (daysAgoYears >= 0) "years are positive"
+      , check
+          (daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths <
+           approximateDaysPerYear)
+          "days, weeks and months do not sum to a year"
       , check (daysAgoMonths < 13) "months < 13"
       , check (daysAgoMonths >= 0) "months are positive"
+      , check
+          (daysAgoDays + daysPerWeek * daysAgoWeeks < approximateDaysPerMonth)
+          "days and weeks do not sum to a month"
       , check (daysAgoWeeks < 5) "weeks < 5"
       , check (daysAgoWeeks >= 0) "weeks are positive"
       , check (daysAgoDays < 7) "days < 7"
@@ -58,13 +66,17 @@ daysAgo i = DaysAgo {..}
 
 daysAgoToDays :: DaysAgo -> Integer
 daysAgoToDays DaysAgo {..} =
-  daysAgoDays + 7 * daysAgoWeeks + 12 * daysAgoMonths + 356 * daysAgoYears
+  (case daysAgoSign of
+     EQ -> const 0
+     GT -> id
+     LT -> negate) $
+  daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths +
+  approximateDaysPerYear * daysAgoYears
 
 data TimeAgo =
   TimeAgo
-    { timeAgoSign :: !Ordering
-    , timeAgoWeeks :: !Integer
-    , timeAgoDays :: !Integer
+    { timeAgoSign :: Ordering
+    , timeAgoDaysAgo :: !DaysAgo
     , timeAgoHours :: !Integer
     , timeAgoMinutes :: !Integer
     , timeAgoSeconds :: !Integer
@@ -73,14 +85,14 @@ data TimeAgo =
   deriving (Show, Eq, Generic)
 
 instance Validity TimeAgo where
-  validate TimeAgo {..} =
+  validate ta@TimeAgo {..} =
     mconcat
-      [ check
+      [ genericValidate ta
+      , check
           (case timeAgoSign of
              EQ ->
                and
-                 [ timeAgoWeeks == 0
-                 , timeAgoDays == 0
+                 [ daysAgoToDays timeAgoDaysAgo == 0
                  , timeAgoHours == 0
                  , timeAgoMinutes == 0
                  , timeAgoSeconds == 0
@@ -89,17 +101,14 @@ instance Validity TimeAgo where
              _ ->
                any
                  (> 0)
-                 [ timeAgoWeeks
-                 , timeAgoDays
+                 [ daysAgoToDays timeAgoDaysAgo
                  , timeAgoHours
                  , timeAgoMinutes
                  , timeAgoSeconds
                  , timeAgoPicoSeconds
                  ])
           "the sign makes sense"
-      , check (timeAgoWeeks >= 0) "weeks are positive"
-      , check (timeAgoDays < daysPerWeek) "days < 7"
-      , check (timeAgoDays >= 0) "days are positive"
+      , check (daysAgoSign timeAgoDaysAgo /= LT) "The days ago are not negative"
       , check (timeAgoHours < hoursPerDay) "hours < 24"
       , check (timeAgoHours >= 0) "hours are positive"
       , check (timeAgoMinutes < minutesPerHour) "minutes < 60"
@@ -118,18 +127,13 @@ timeAgo dt = TimeAgo {..}
     timeAgoSeconds = totalSecondsAgo - secondsPerMinute * totalMinutesAgo
     timeAgoMinutes = totalMinutesAgo - minutesPerHour * totalHoursAgo
     timeAgoHours = totalHoursAgo - hoursPerDay * totalDaysAgo
-    timeAgoDays = totalDaysAgo - daysPerWeek * totalWeeksAgo
-    timeAgoWeeks = totalWeeksAgo
+    timeAgoDaysAgo = daysAgo totalDaysAgo
     totalPicoSecondsAgo = floor $ absDt * fromIntegral (picoSecondsPerSecond :: Integer)
     totalSecondsAgo = floor absDt :: Integer
     totalMinutesAgo = floor $ absDt / fromIntegral (secondsPerMinute :: Integer)
     totalHoursAgo = floor $ absDt / fromIntegral (minutesPerHour * secondsPerMinute :: Integer)
     totalDaysAgo =
       floor $ absDt / fromIntegral (hoursPerDay * minutesPerHour * secondsPerMinute :: Integer)
-    totalWeeksAgo =
-      floor $
-      absDt /
-      fromIntegral (daysPerWeek * hoursPerDay * minutesPerHour * secondsPerMinute :: Integer)
     absDt = abs dt
 
 timeAgoToDiffTime :: TimeAgo -> NominalDiffTime
@@ -145,4 +149,4 @@ timeAgoToDiffTime TimeAgo {..} =
      (timeAgoSeconds +
       secondsPerMinute *
       (timeAgoMinutes +
-       minutesPerHour * (timeAgoHours + hoursPerDay * (timeAgoDays + daysPerWeek * timeAgoWeeks)))))
+       minutesPerHour * (timeAgoHours + hoursPerDay * (daysAgoToDays timeAgoDaysAgo)))))
