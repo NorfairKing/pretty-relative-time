@@ -40,7 +40,7 @@ instance Validity DaysAgo where
           (daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths <
            approximateDaysPerYear)
           "days, weeks and months do not sum to a year"
-      , check (daysAgoMonths < 13) "months < 13"
+      , check (daysAgoMonths < 12) "months < 12"
       , check (daysAgoMonths >= 0) "months are positive"
       , check
           (daysAgoDays + daysPerWeek * daysAgoWeeks < approximateDaysPerMonth)
