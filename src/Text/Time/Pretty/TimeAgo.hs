@@ -18,11 +18,11 @@ import Text.Time.Pretty.Constants
 
 data DaysAgo =
   DaysAgo
-    { daysAgoSign :: !Ordering
-    , daysAgoYears :: !Integer
-    , daysAgoMonths :: !Integer
-    , daysAgoWeeks :: !Integer
-    , daysAgoDays :: !Integer
+    { daysAgoSign :: Ordering
+    , daysAgoYears :: Integer
+    , daysAgoMonths :: Integer
+    , daysAgoWeeks :: Integer
+    , daysAgoDays :: Integer
     }
   deriving (Show, Eq, Generic)
 
@@ -76,11 +76,11 @@ daysAgoToDays DaysAgo {..} =
 data TimeAgo =
   TimeAgo
     { timeAgoSign :: Ordering
-    , timeAgoDaysAgo :: !DaysAgo
-    , timeAgoHours :: !Integer
-    , timeAgoMinutes :: !Integer
-    , timeAgoSeconds :: !Integer
-    , timeAgoPicoSeconds :: !Integer
+    , timeAgoDaysAgo :: DaysAgo
+    , timeAgoHours :: Integer
+    , timeAgoMinutes :: Integer
+    , timeAgoSeconds :: Integer
+    , timeAgoPicoSeconds :: Integer
     }
   deriving (Show, Eq, Generic)
 
