@@ -41,10 +41,10 @@ spec = do
   eqSpec @DaysAgo
   genValidSpec @DaysAgo
   describe "daysAgo" $ do
-    it "produces valid TimeAgo's" $ producesValidsOnValids daysAgo
+    it "produces valid TimeAgos" $ producesValidsOnValids daysAgo
     it "is the inverse of daysAgoToDays" $ inverseFunctionsOnValid daysAgo daysAgoToDays
   describe "daysAgoToDays" $ do
-    it "produces valid DiffTime's" $ producesValidsOnValids daysAgoToDays
+    it "produces valid results" $ producesValidsOnValids daysAgoToDays
     it "is the inverse of daysAgo for just days" $
       inverseFunctionsOnGen
         daysAgoToDays
@@ -53,7 +53,7 @@ spec = do
         (const [])
     it "is the inverse of daysAgo" $ inverseFunctionsOnValid daysAgoToDays daysAgo
   describe "renderDaysAgoAuto" $ do
-    it "produces valid Strings's" $ producesValidsOnValids renderDaysAgoAuto
+    it "produces valid Strings" $ producesValidsOnValids renderDaysAgoAuto
     let i da s = it (unwords ["Renders", show da, "as", show s]) $ renderDaysAgoAuto da `shouldBe` s
     describe "renders these simple examples well" $ do
       i (DaysAgo GT 5 0 0 0) "5 years ago"
@@ -115,7 +115,7 @@ spec = do
       i (TimeAgo GT (DaysAgo GT 1 0 0 0) 0 0 0 0) "1 year ago"
       i (TimeAgo GT (DaysAgo GT 0 1 0 0) 0 0 0 0) "1 month ago"
       i (TimeAgo GT (DaysAgo GT 0 0 1 0) 0 0 0 0) "1 week ago"
-      i (TimeAgo GT (DaysAgo GT 0 0 0 1) 0 0 0 0) "yesterday"
+      i (TimeAgo GT (DaysAgo GT 0 0 0 1) 0 0 0 0) "1 day ago"
       i (TimeAgo GT (DaysAgo GT 0 0 0 0) 1 0 0 0) "1 hour ago"
       i (TimeAgo GT (DaysAgo GT 0 0 0 0) 0 1 0 0) "1 minute ago"
       i (TimeAgo GT (DaysAgo GT 0 0 0 0) 0 0 1 0) "1 second ago"
@@ -124,7 +124,7 @@ spec = do
       i (TimeAgo LT (DaysAgo GT 1 0 0 0) 0 0 0 0) "in 1 year"
       i (TimeAgo LT (DaysAgo GT 0 1 0 0) 0 0 0 0) "in 1 month"
       i (TimeAgo LT (DaysAgo GT 0 0 1 0) 0 0 0 0) "in 1 week"
-      i (TimeAgo LT (DaysAgo GT 0 0 0 1) 0 0 0 0) "tomorrow"
+      i (TimeAgo LT (DaysAgo GT 0 0 0 1) 0 0 0 0) "in 1 day"
       i (TimeAgo LT (DaysAgo GT 0 0 0 0) 1 0 0 0) "in 1 hour"
       i (TimeAgo LT (DaysAgo GT 0 0 0 0) 0 1 0 0) "in 1 minute"
       i (TimeAgo LT (DaysAgo GT 0 0 0 0) 0 0 1 0) "in 1 second"
