@@ -20,7 +20,8 @@ instance GenValid DaysAgo where
     case sign of
       EQ -> pure $ DaysAgo EQ 0 0 0 0
       _ ->
-        (DaysAgo sign <$> choose (0, 364) <*> choose (0, 29) <*> choose (0, 4) <*> choose (0, 7)) `suchThat`
+        (DaysAgo sign <$> (fromInteger <$> choose (0, 364)) <*> (fromInteger <$> choose (0, 29)) <*> (fromInteger <$> choose (0, 4)) <*>
+         (fromInteger <$> choose (0, 7))) `suchThat`
         isValid
 
 instance GenUnchecked TimeAgo
@@ -31,9 +32,10 @@ instance GenValid TimeAgo where
     case sign of
       EQ -> pure $ TimeAgo EQ (DaysAgo EQ 0 0 0 0) 0 0 0 0
       _ ->
-        (TimeAgo sign <$> genValid <*> choose (0, hoursPerDay) <*> choose (0, minutesPerHour) <*>
-         choose (0, secondsPerMinute) <*>
-         choose (0, picoSecondsPerSecond)) `suchThat`
+        (TimeAgo sign <$> genValid <*> (fromInteger <$> choose (0, hoursPerDay)) <*>
+         (fromInteger <$> choose (0, minutesPerHour)) <*>
+         (fromInteger <$> choose (0, secondsPerMinute)) <*>
+         (fromInteger <$> choose (0, picoSecondsPerSecond))) `suchThat`
         isValid
 
 spec :: Spec

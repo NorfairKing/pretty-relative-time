@@ -13,16 +13,17 @@ module Text.Time.Pretty.TimeAgo
 import Data.Time
 import Data.Validity
 import GHC.Generics (Generic)
+import Numeric.Natural
 
 import Text.Time.Pretty.Constants
 
 data DaysAgo =
   DaysAgo
     { daysAgoSign :: Ordering
-    , daysAgoYears :: Integer
-    , daysAgoMonths :: Integer
-    , daysAgoWeeks :: Integer
-    , daysAgoDays :: Integer
+    , daysAgoYears :: Natural
+    , daysAgoMonths :: Natural
+    , daysAgoWeeks :: Natural
+    , daysAgoDays :: Natural
     }
   deriving (Show, Eq, Generic)
 
@@ -35,20 +36,16 @@ instance Validity DaysAgo where
              EQ -> and [daysAgoDays == 0, daysAgoWeeks == 0, daysAgoMonths == 0, daysAgoYears == 0]
              _ -> any (> 0) [daysAgoDays, daysAgoWeeks, daysAgoMonths, daysAgoYears])
           "the sign makes sense"
-      , check (daysAgoYears >= 0) "years are positive"
       , check
           (daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths <
            approximateDaysPerYear)
           "days, weeks and months do not sum to a year"
       , check (daysAgoMonths < 12) "months < 12"
-      , check (daysAgoMonths >= 0) "months are positive"
       , check
           (daysAgoDays + daysPerWeek * daysAgoWeeks < approximateDaysPerMonth)
           "days and weeks do not sum to a month"
       , check (daysAgoWeeks < 5) "weeks < 5"
-      , check (daysAgoWeeks >= 0) "weeks are positive"
       , check (daysAgoDays < 7) "days < 7"
-      , check (daysAgoDays >= 0) "days are positive"
       ]
 
 daysAgo :: Integer -> DaysAgo
@@ -56,12 +53,13 @@ daysAgo i = DaysAgo {..}
   where
     totalDays = abs i
     daysAgoSign = compare i 0
-    daysAgoYears = totalDays `div` approximateDaysPerYear
-    daysLeftAfterYears = totalDays - daysAgoYears * approximateDaysPerYear
-    daysAgoMonths = daysLeftAfterYears `div` approximateDaysPerMonth
-    daysLeftAfterMonths = daysLeftAfterYears - daysAgoMonths * approximateDaysPerMonth
-    daysAgoWeeks = daysLeftAfterMonths `div` daysPerWeek
-    daysLeftAfterWeeks = daysLeftAfterMonths - daysAgoWeeks * daysPerWeek
+    daysAgoYears = fromInteger totalDays `div` fromInteger approximateDaysPerYear :: Natural
+    daysLeftAfterYears =fromInteger totalDays - daysAgoYears * fromInteger approximateDaysPerYear :: Natural
+    daysAgoMonths = daysLeftAfterYears `div` fromInteger approximateDaysPerMonth :: Natural
+    daysLeftAfterMonths =
+      daysLeftAfterYears - daysAgoMonths * fromInteger approximateDaysPerMonth :: Natural
+    daysAgoWeeks = daysLeftAfterMonths `div` fromInteger daysPerWeek :: Natural
+    daysLeftAfterWeeks = daysLeftAfterMonths - daysAgoWeeks * fromInteger daysPerWeek :: Natural
     daysAgoDays = daysLeftAfterWeeks
 
 daysAgoToDays :: DaysAgo -> Integer
@@ -70,6 +68,7 @@ daysAgoToDays DaysAgo {..} =
      EQ -> const 0
      GT -> id
      LT -> negate) $
+  toInteger $
   daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths +
   approximateDaysPerYear * daysAgoYears
 
@@ -77,10 +76,10 @@ data TimeAgo =
   TimeAgo
     { timeAgoSign :: Ordering
     , timeAgoDaysAgo :: DaysAgo
-    , timeAgoHours :: Integer
-    , timeAgoMinutes :: Integer
-    , timeAgoSeconds :: Integer
-    , timeAgoPicoSeconds :: Integer
+    , timeAgoHours :: Natural
+    , timeAgoMinutes :: Natural
+    , timeAgoSeconds :: Natural
+    , timeAgoPicoSeconds :: Natural
     }
   deriving (Show, Eq, Generic)
 
@@ -101,7 +100,7 @@ instance Validity TimeAgo where
              _ ->
                any
                  (> 0)
-                 [ daysAgoToDays timeAgoDaysAgo
+                 [ fromInteger $ daysAgoToDays timeAgoDaysAgo
                  , timeAgoHours
                  , timeAgoMinutes
                  , timeAgoSeconds
@@ -110,23 +109,19 @@ instance Validity TimeAgo where
           "the sign makes sense"
       , check (daysAgoSign timeAgoDaysAgo /= LT) "The days ago are not negative"
       , check (timeAgoHours < hoursPerDay) "hours < 24"
-      , check (timeAgoHours >= 0) "hours are positive"
       , check (timeAgoMinutes < minutesPerHour) "minutes < 60"
-      , check (timeAgoMinutes >= 0) "minutes are positive"
       , check (timeAgoSeconds < secondsPerMinute) "seconds < 60"
-      , check (timeAgoSeconds >= 0) "seconds are positive"
       , check (timeAgoPicoSeconds < picoSecondsPerSecond) "picoseconds < 1E12"
-      , check (timeAgoPicoSeconds >= 0) "picoseconds are positive"
       ]
 
 timeAgo :: NominalDiffTime -> TimeAgo
 timeAgo dt = TimeAgo {..}
   where
     timeAgoSign = compare dt 0
-    timeAgoPicoSeconds = totalPicoSecondsAgo - picoSecondsPerSecond * totalSecondsAgo
-    timeAgoSeconds = totalSecondsAgo - secondsPerMinute * totalMinutesAgo
-    timeAgoMinutes = totalMinutesAgo - minutesPerHour * totalHoursAgo
-    timeAgoHours = totalHoursAgo - hoursPerDay * totalDaysAgo
+    timeAgoPicoSeconds = fromInteger $ totalPicoSecondsAgo - picoSecondsPerSecond * totalSecondsAgo
+    timeAgoSeconds = fromInteger $ totalSecondsAgo - secondsPerMinute * totalMinutesAgo
+    timeAgoMinutes = fromInteger $ totalMinutesAgo - minutesPerHour * totalHoursAgo
+    timeAgoHours = fromInteger $ totalHoursAgo - hoursPerDay * totalDaysAgo
     timeAgoDaysAgo = daysAgo totalDaysAgo
     totalPicoSecondsAgo = floor $ absDt * fromIntegral (picoSecondsPerSecond :: Integer)
     totalSecondsAgo = floor absDt :: Integer
@@ -145,8 +140,9 @@ timeAgoToDiffTime TimeAgo {..} =
      GT -> id
      LT -> negate)
     (timeAgoPicoSeconds +
-     picoSecondsPerSecond *
+     fromInteger picoSecondsPerSecond *
      (timeAgoSeconds +
-      secondsPerMinute *
+      fromInteger secondsPerMinute *
       (timeAgoMinutes +
-       minutesPerHour * (timeAgoHours + hoursPerDay * (daysAgoToDays timeAgoDaysAgo)))))
+       fromInteger minutesPerHour *
+       (timeAgoHours + fromInteger hoursPerDay * fromInteger (daysAgoToDays timeAgoDaysAgo)))))
