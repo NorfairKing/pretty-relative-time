@@ -10,6 +10,8 @@ module Text.Time.Pretty.TimeAgo
   , TimeAgo(..)
   ) where
 
+import Debug.Trace
+
 import Data.Time
 import Data.Validity
 import GHC.Generics (Generic)
@@ -54,7 +56,8 @@ daysAgo i = DaysAgo {..}
     totalDays = abs i
     daysAgoSign = compare i 0
     daysAgoYears = fromInteger totalDays `div` fromInteger approximateDaysPerYear :: Natural
-    daysLeftAfterYears =fromInteger totalDays - daysAgoYears * fromInteger approximateDaysPerYear :: Natural
+    daysLeftAfterYears =
+      fromInteger totalDays - daysAgoYears * fromInteger approximateDaysPerYear :: Natural
     daysAgoMonths = daysLeftAfterYears `div` fromInteger approximateDaysPerMonth :: Natural
     daysLeftAfterMonths =
       daysLeftAfterYears - daysAgoMonths * fromInteger approximateDaysPerMonth :: Natural
@@ -140,9 +143,9 @@ timeAgoToDiffTime TimeAgo {..} =
      GT -> id
      LT -> negate)
     (timeAgoPicoSeconds +
-     fromInteger picoSecondsPerSecond *
+     (fromInteger picoSecondsPerSecond :: Natural) *
      (timeAgoSeconds +
-      fromInteger secondsPerMinute *
+      (fromInteger secondsPerMinute :: Natural) *
       (timeAgoMinutes +
-       fromInteger minutesPerHour *
-       (timeAgoHours + fromInteger hoursPerDay * fromInteger (daysAgoToDays timeAgoDaysAgo)))))
+       (fromInteger minutesPerHour :: Natural) *
+       (timeAgoHours + (fromInteger hoursPerDay  :: Natural) * fromInteger (daysAgoToDays timeAgoDaysAgo)))))

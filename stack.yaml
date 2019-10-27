@@ -3,7 +3,7 @@ packages:
 - .
 extra-deps:
 - git: https://github.com/NorfairKing/validity.git
-  commit: 550327539d84d72ba8be8412025b0074d14c4188
+  commit: eb5e00bfc11ccabb197822154ef4b6169b3e1aa4
   subdirs:
   - genvalidity
   - genvalidity-aeson

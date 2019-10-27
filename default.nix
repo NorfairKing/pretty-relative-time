@@ -6,6 +6,9 @@ let
     + "/nix/overlay.nix")
   );
 in (pkgsv {
-  overlays = [ validity-overlay (import ./nix/overlay.nix) ];
+  overlays = [
+    (import ./nix/gitignore-src.nix)
+    validity-overlay
+    (import ./nix/overlay.nix) ];
   config.allowUnfree = true;
 }).prettyRelativeTimePackages
