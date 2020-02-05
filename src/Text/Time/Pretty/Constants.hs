@@ -24,7 +24,7 @@ daysPerWeek :: Integral a => a
 daysPerWeek = 7
 
 approximateDaysPerMonth :: Integral a => a
-approximateDaysPerMonth = 30
+approximateDaysPerMonth = 31
 
 approximateDaysPerYear :: Integral a => a
 approximateDaysPerYear = 365

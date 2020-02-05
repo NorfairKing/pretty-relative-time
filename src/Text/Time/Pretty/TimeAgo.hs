@@ -10,6 +10,8 @@ module Text.Time.Pretty.TimeAgo
   , TimeAgo(..)
   ) where
 
+import Debug.Trace
+
 import Data.Time
 import Data.Validity
 import GHC.Generics (Generic)
@@ -32,12 +34,22 @@ instance Validity DaysAgo where
       [ genericValidate da
       , check
           (case daysAgoSign of
-             EQ -> and [daysAgoDays == 0, daysAgoWeeks == 0, daysAgoMonths == 0, daysAgoYears == 0]
-             _ -> any (> 0) [daysAgoDays, daysAgoWeeks, daysAgoMonths, daysAgoYears])
+             EQ ->
+               and
+                 [ daysAgoDays == 0
+                 , daysAgoWeeks == 0
+                 , daysAgoMonths == 0
+                 , daysAgoYears == 0
+                 ]
+             _ ->
+               any
+                 (> 0)
+                 [daysAgoDays, daysAgoWeeks, daysAgoMonths, daysAgoYears])
           "the sign makes sense"
       , check (daysAgoYears >= 0) "years are positive"
       , check
-          (daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths <
+          (daysAgoDays + daysPerWeek * daysAgoWeeks +
+           approximateDaysPerMonth * daysAgoMonths <
            approximateDaysPerYear)
           "days, weeks and months do not sum to a year"
       , check (daysAgoMonths < 12) "months < 12"
@@ -58,8 +70,10 @@ daysAgo i = DaysAgo {..}
     daysAgoSign = compare i 0
     daysAgoYears = totalDays `div` approximateDaysPerYear
     daysLeftAfterYears = totalDays - daysAgoYears * approximateDaysPerYear
-    daysAgoMonths = daysLeftAfterYears `div` approximateDaysPerMonth
-    daysLeftAfterMonths = daysLeftAfterYears - daysAgoMonths * approximateDaysPerMonth
+    daysAgoMonths =
+      traceShowId daysLeftAfterYears `div` traceShowId approximateDaysPerMonth
+    daysLeftAfterMonths =
+      daysLeftAfterYears - daysAgoMonths * approximateDaysPerMonth
     daysAgoWeeks = daysLeftAfterMonths `div` daysPerWeek
     daysLeftAfterWeeks = daysLeftAfterMonths - daysAgoWeeks * daysPerWeek
     daysAgoDays = daysLeftAfterWeeks
@@ -70,7 +84,8 @@ daysAgoToDays DaysAgo {..} =
      EQ -> const 0
      GT -> id
      LT -> negate) $
-  daysAgoDays + daysPerWeek * daysAgoWeeks + approximateDaysPerMonth * daysAgoMonths +
+  daysAgoDays + daysPerWeek * daysAgoWeeks +
+  approximateDaysPerMonth * daysAgoMonths +
   approximateDaysPerYear * daysAgoYears
 
 data TimeAgo =
@@ -123,17 +138,23 @@ timeAgo :: NominalDiffTime -> TimeAgo
 timeAgo dt = TimeAgo {..}
   where
     timeAgoSign = compare dt 0
-    timeAgoPicoSeconds = totalPicoSecondsAgo - picoSecondsPerSecond * totalSecondsAgo
+    timeAgoPicoSeconds =
+      totalPicoSecondsAgo - picoSecondsPerSecond * totalSecondsAgo
     timeAgoSeconds = totalSecondsAgo - secondsPerMinute * totalMinutesAgo
     timeAgoMinutes = totalMinutesAgo - minutesPerHour * totalHoursAgo
     timeAgoHours = totalHoursAgo - hoursPerDay * totalDaysAgo
     timeAgoDaysAgo = daysAgo totalDaysAgo
-    totalPicoSecondsAgo = floor $ absDt * fromIntegral (picoSecondsPerSecond :: Integer)
+    totalPicoSecondsAgo =
+      floor $ absDt * fromIntegral (picoSecondsPerSecond :: Integer)
     totalSecondsAgo = floor absDt :: Integer
     totalMinutesAgo = floor $ absDt / fromIntegral (secondsPerMinute :: Integer)
-    totalHoursAgo = floor $ absDt / fromIntegral (minutesPerHour * secondsPerMinute :: Integer)
+    totalHoursAgo =
+      floor $
+      absDt / fromIntegral (minutesPerHour * secondsPerMinute :: Integer)
     totalDaysAgo =
-      floor $ absDt / fromIntegral (hoursPerDay * minutesPerHour * secondsPerMinute :: Integer)
+      floor $
+      absDt /
+      fromIntegral (hoursPerDay * minutesPerHour * secondsPerMinute :: Integer)
     absDt = abs dt
 
 timeAgoToDiffTime :: TimeAgo -> NominalDiffTime
@@ -149,4 +170,5 @@ timeAgoToDiffTime TimeAgo {..} =
      (timeAgoSeconds +
       secondsPerMinute *
       (timeAgoMinutes +
-       minutesPerHour * (timeAgoHours + hoursPerDay * (daysAgoToDays timeAgoDaysAgo)))))
+       minutesPerHour *
+       (timeAgoHours + hoursPerDay * (daysAgoToDays timeAgoDaysAgo)))))
