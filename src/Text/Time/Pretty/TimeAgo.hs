@@ -10,8 +10,6 @@ module Text.Time.Pretty.TimeAgo
   , TimeAgo(..)
   ) where
 
-import Debug.Trace
-
 import Data.Time
 import Data.Validity
 import GHC.Generics (Generic)
@@ -70,8 +68,7 @@ daysAgo i = DaysAgo {..}
     daysAgoSign = compare i 0
     daysAgoYears = totalDays `div` approximateDaysPerYear
     daysLeftAfterYears = totalDays - daysAgoYears * approximateDaysPerYear
-    daysAgoMonths =
-      traceShowId daysLeftAfterYears `div` traceShowId approximateDaysPerMonth
+    daysAgoMonths = daysLeftAfterYears `div` approximateDaysPerMonth
     daysLeftAfterMonths =
       daysLeftAfterYears - daysAgoMonths * approximateDaysPerMonth
     daysAgoWeeks = daysLeftAfterMonths `div` daysPerWeek
