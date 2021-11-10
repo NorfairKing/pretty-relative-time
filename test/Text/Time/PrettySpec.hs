@@ -2,17 +2,15 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Text.Time.PrettySpec
-  ( spec
-  ) where
+  ( spec,
+  )
+where
 
 import Data.GenValidity.Time ()
 import Test.Hspec
 import Test.QuickCheck
 import Test.Validity
-
 import Text.Time.Pretty
-
-instance GenUnchecked DaysAgo
 
 instance GenValid DaysAgo where
   genValid = do
@@ -20,10 +18,8 @@ instance GenValid DaysAgo where
     case sign of
       EQ -> pure $ DaysAgo EQ 0 0 0 0
       _ ->
-        (DaysAgo sign <$> choose (0, 364) <*> choose (0, 29) <*> choose (0, 4) <*> choose (0, 7)) `suchThat`
-        isValid
-
-instance GenUnchecked TimeAgo
+        (DaysAgo sign <$> choose (0, 364) <*> choose (0, 29) <*> choose (0, 4) <*> choose (0, 7))
+          `suchThat` isValid
 
 instance GenValid TimeAgo where
   genValid = do
@@ -31,29 +27,30 @@ instance GenValid TimeAgo where
     case sign of
       EQ -> pure $ TimeAgo EQ (DaysAgo EQ 0 0 0 0) 0 0 0 0
       _ ->
-        (TimeAgo sign <$> genValid <*> choose (0, hoursPerDay) <*> choose (0, minutesPerHour) <*>
-         choose (0, secondsPerMinute) <*>
-         choose (0, picoSecondsPerSecond)) `suchThat`
-        isValid
+        ( TimeAgo sign <$> genValid <*> choose (0, hoursPerDay) <*> choose (0, minutesPerHour)
+            <*> choose (0, secondsPerMinute)
+            <*> choose (0, picoSecondsPerSecond)
+        )
+          `suchThat` isValid
 
 spec :: Spec
 spec = do
   eqSpec @DaysAgo
   genValidSpec @DaysAgo
   describe "daysAgo" $ do
-    it "produces valid TimeAgos" $ producesValidsOnValids daysAgo
-    it "is the inverse of daysAgoToDays" $ inverseFunctionsOnValid daysAgo daysAgoToDays
+    it "produces valid TimeAgos" $ producesValid daysAgo
+    it "is the inverse of daysAgoToDays" $ inverseFunctions daysAgo daysAgoToDays
   describe "daysAgoToDays" $ do
-    it "produces valid results" $ producesValidsOnValids daysAgoToDays
+    it "produces valid results" $ producesValid daysAgoToDays
     it "is the inverse of daysAgo for just days" $
       inverseFunctionsOnGen
         daysAgoToDays
         daysAgo
         (((\d -> DaysAgo GT 0 d 0 0) <$> genValid) `suchThat` isValid)
         (const [])
-    it "is the inverse of daysAgo" $ inverseFunctionsOnValid daysAgoToDays daysAgo
+    it "is the inverse of daysAgo" $ inverseFunctions daysAgoToDays daysAgo
   describe "renderDaysAgoAuto" $ do
-    it "produces valid Strings" $ producesValidsOnValids renderDaysAgoAuto
+    it "produces valid Strings" $ producesValid renderDaysAgoAuto
     let i da s = it (unwords ["Renders", show da, "as", show s]) $ renderDaysAgoAuto da `shouldBe` s
     describe "renders these simple examples well" $ do
       i (DaysAgo GT 5 0 0 0) "5 years ago"
@@ -79,19 +76,19 @@ spec = do
   eqSpec @TimeAgo
   genValidSpec @TimeAgo
   describe "timeAgo" $ do
-    it "produces valid TimeAgo's" $ producesValidsOnValids timeAgo
-    it "is the inverse of timeAgoToDiffTime" $ inverseFunctionsOnValid timeAgo timeAgoToDiffTime
+    it "produces valid TimeAgo's" $ producesValid timeAgo
+    it "is the inverse of timeAgoToDiffTime" $ inverseFunctions timeAgo timeAgoToDiffTime
   describe "timeAgoToDiffTime" $ do
-    it "produces valid DiffTime's" $ producesValidsOnValids timeAgoToDiffTime
+    it "produces valid DiffTime's" $ producesValid timeAgoToDiffTime
     it "is the inverse of timeAgo for just picoseconds" $
       inverseFunctionsOnGen
         timeAgoToDiffTime
         timeAgo
         ((TimeAgo GT (DaysAgo EQ 0 0 0 0) 0 0 0 <$> genValid) `suchThat` isValid)
         (const [])
-    it "is the inverse of timeAgo" $ inverseFunctionsOnValid timeAgoToDiffTime timeAgo
+    it "is the inverse of timeAgo" $ inverseFunctions timeAgoToDiffTime timeAgo
   describe "renderTimeAgoAuto" $ do
-    it "produces valid Strings's" $ producesValidsOnValids renderTimeAgoAuto
+    it "produces valid Strings's" $ producesValid renderTimeAgoAuto
     let i ta s = it (unwords ["Renders", show ta, "as", show s]) $ renderTimeAgoAuto ta `shouldBe` s
     describe "renders these simple examples well" $ do
       i (TimeAgo GT (DaysAgo GT 2 0 0 0) 0 0 0 0) "2 years ago"

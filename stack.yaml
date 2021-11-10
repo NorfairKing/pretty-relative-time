@@ -1,9 +1,9 @@
-resolver: lts-14.20
+resolver: lts-16.12
 packages:
 - .
 extra-deps:
 - github: NorfairKing/validity
-  commit: 46db904f7b2af69b9514a51c79fd88704ff3927b
+  commit: 2777b766afc4be0adf3106a73b179848f4245646
   subdirs:
   - genvalidity
   - genvalidity-aeson
@@ -37,7 +37,7 @@ extra-deps:
   - validity-vector
 
 nix:
-  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/e6b93257b0ba070bd12810eeacbe281396c24316.tar.gz" ]
+  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/359e6542e1d41eb18df55c82bdb08bf738fae2cf.tar.gz" ]
   add-gc-roots: true
   packages:
   - zlib

@@ -38,5 +38,6 @@ tests:
     - pretty-relative-time
     - hspec
     - QuickCheck
+    - genvalidity >= 1.0
     - genvalidity-hspec
     - genvalidity-time
