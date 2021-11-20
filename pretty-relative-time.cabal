@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           pretty-relative-time
-version:        0.2.0.0
+version:        0.3.0.0
 synopsis:       Pretty relative time
 description:    Please see the README on Github at <https://github.com/NorfairKing/pretty-relative-time#readme>
 category:       Time
@@ -13,7 +13,7 @@ homepage:       https://github.com/NorfairKing/pretty-relative-time#readme
 bug-reports:    https://github.com/NorfairKing/pretty-relative-time/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd.kerckhove@gmail.com
-copyright:      Copyright: (c) 2018 Tom Sydney Kerckhove
+copyright:      Copyright: (c) 2018-2021 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple

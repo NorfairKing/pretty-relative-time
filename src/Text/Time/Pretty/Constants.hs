@@ -1,12 +1,13 @@
 module Text.Time.Pretty.Constants
-  ( picoSecondsPerSecond
-  , secondsPerMinute
-  , minutesPerHour
-  , hoursPerDay
-  , daysPerWeek
-  , approximateDaysPerMonth
-  , approximateDaysPerYear
-  ) where
+  ( picoSecondsPerSecond,
+    secondsPerMinute,
+    minutesPerHour,
+    hoursPerDay,
+    daysPerWeek,
+    approximateDaysPerMonth,
+    approximateDaysPerYear,
+  )
+where
 
 picoSecondsPerSecond :: Integral a => a
 picoSecondsPerSecond = 10 ^ (12 :: Integer)

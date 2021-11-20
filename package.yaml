@@ -1,10 +1,10 @@
 name:                pretty-relative-time
-version:             0.2.0.0
+version:             0.3.0.0
 github:              "NorfairKing/pretty-relative-time"
 license:             MIT
 author:              "Tom Sydney Kerckhove"
 maintainer:          "syd.kerckhove@gmail.com"
-copyright:           "Copyright: (c) 2018 Tom Sydney Kerckhove"
+copyright:           "Copyright: (c) 2018-2021 Tom Sydney Kerckhove"
 
 extra-source-files:
 - README.md
@@ -38,6 +38,6 @@ tests:
     - pretty-relative-time
     - hspec
     - QuickCheck
-    - genvalidity >= 1.0
+    - genvalidity >=1.0
     - genvalidity-hspec
     - genvalidity-time
