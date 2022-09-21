@@ -1,9 +1,9 @@
-resolver: lts-16.12
+resolver: lts-19.6
 packages:
 - .
 extra-deps:
 - github: NorfairKing/validity
-  commit: 35bc8d45b27e6c21429e4b681b16e46ccd541b3b
+  commit: 657cf4bdc2731387abea6e707b88d381d5218616
   subdirs:
   - genvalidity
   - genvalidity-aeson

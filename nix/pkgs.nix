@@ -1,9 +1,8 @@
 { sources ? import ./sources.nix
+, nixpkgs ? sources.nixpkgs
+, system ? builtins.currentSystem
 }:
-let
-  pkgsv = import sources.nixpkgs;
-in
-import sources.nixpkgs {
+import nixpkgs {
   overlays = [
     (import (sources.validity + "/nix/overlay.nix"))
     (final: previous: { inherit (import sources.gitignore { inherit (final) lib; }) gitignoreSource; })
