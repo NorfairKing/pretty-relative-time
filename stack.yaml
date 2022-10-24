@@ -1,6 +1,6 @@
 resolver: lts-19.6
 packages:
-- .
+- pretty-relative-time
 extra-deps:
 - github: NorfairKing/validity
   commit: 657cf4bdc2731387abea6e707b88d381d5218616
@@ -36,6 +36,8 @@ extra-deps:
   - validity-uuid
   - validity-vector
 
+system-ghc: true
 nix:
-  shell-file: shell.nix
+  enable: false
+with-hpack: hpack
 

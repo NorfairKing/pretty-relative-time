@@ -1,1 +1,1 @@
-# pretty-relative-time
+# Pretty Relative Time
