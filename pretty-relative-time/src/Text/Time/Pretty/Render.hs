@@ -37,7 +37,7 @@ renderTimeAgoAuto TimeAgo {..} =
       if
           | daysAgoToDays timeAgoDaysAgo == 1 -> "1 day ago"
           | daysAgoToDays timeAgoDaysAgo > 0 ->
-            renderDaysAgoAuto (timeAgoDaysAgo {daysAgoSign = timeAgoSign})
+              renderDaysAgoAuto (timeAgoDaysAgo {daysAgoSign = timeAgoSign})
           | timeAgoHours > 0 -> unwords [plural timeAgoHours "hour" "hours", "ago"]
           | timeAgoMinutes > 0 -> unwords [plural timeAgoMinutes "minute" "minutes", "ago"]
           | timeAgoSeconds > 0 -> unwords [plural timeAgoSeconds "second" "seconds", "ago"]
@@ -47,7 +47,7 @@ renderTimeAgoAuto TimeAgo {..} =
       if
           | daysAgoToDays timeAgoDaysAgo == 1 -> "in 1 day"
           | daysAgoToDays timeAgoDaysAgo > 0 ->
-            renderDaysAgoAuto (timeAgoDaysAgo {daysAgoSign = timeAgoSign})
+              renderDaysAgoAuto (timeAgoDaysAgo {daysAgoSign = timeAgoSign})
           | timeAgoHours > 0 -> unwords ["in", plural timeAgoHours "hour" "hours"]
           | timeAgoMinutes > 0 -> unwords ["in", plural timeAgoMinutes "minute" "minutes"]
           | timeAgoSeconds > 0 -> unwords ["in", plural timeAgoSeconds "second" "seconds"]

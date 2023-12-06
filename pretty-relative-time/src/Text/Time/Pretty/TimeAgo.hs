@@ -46,7 +46,8 @@ instance Validity DaysAgo where
           "the sign makes sense",
         check (daysAgoYears >= 0) "years are positive",
         check
-          ( daysAgoDays + daysPerWeek * daysAgoWeeks
+          ( daysAgoDays
+              + daysPerWeek * daysAgoWeeks
               + approximateDaysPerMonth * daysAgoMonths
               < approximateDaysPerYear
           )
@@ -83,7 +84,8 @@ daysAgoToDays DaysAgo {..} =
       GT -> id
       LT -> negate
   )
-    $ daysAgoDays + daysPerWeek * daysAgoWeeks
+    $ daysAgoDays
+      + daysPerWeek * daysAgoWeeks
       + approximateDaysPerMonth * daysAgoMonths
       + approximateDaysPerYear * daysAgoYears
 
@@ -167,11 +169,11 @@ timeAgoToDiffTime TimeAgo {..} =
       )
         ( timeAgoPicoSeconds
             + picoSecondsPerSecond
-            * ( timeAgoSeconds
-                  + secondsPerMinute
-                  * ( timeAgoMinutes
-                        + minutesPerHour
-                        * (timeAgoHours + hoursPerDay * daysAgoToDays timeAgoDaysAgo)
-                    )
-              )
+              * ( timeAgoSeconds
+                    + secondsPerMinute
+                      * ( timeAgoMinutes
+                            + minutesPerHour
+                              * (timeAgoHours + hoursPerDay * daysAgoToDays timeAgoDaysAgo)
+                        )
+                )
         )

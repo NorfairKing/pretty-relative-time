@@ -27,7 +27,10 @@ instance GenValid TimeAgo where
     case sign of
       EQ -> pure $ TimeAgo EQ (DaysAgo EQ 0 0 0 0) 0 0 0 0
       _ ->
-        ( TimeAgo sign <$> genValid <*> choose (0, hoursPerDay) <*> choose (0, minutesPerHour)
+        ( TimeAgo sign
+            <$> genValid
+            <*> choose (0, hoursPerDay)
+            <*> choose (0, minutesPerHour)
             <*> choose (0, secondsPerMinute)
             <*> choose (0, picoSecondsPerSecond)
         )
