@@ -9,23 +9,23 @@ module Text.Time.Pretty.Constants
   )
 where
 
-picoSecondsPerSecond :: Integral a => a
+picoSecondsPerSecond :: (Integral a) => a
 picoSecondsPerSecond = 10 ^ (12 :: Integer)
 
-secondsPerMinute :: Integral a => a
+secondsPerMinute :: (Integral a) => a
 secondsPerMinute = 60
 
-minutesPerHour :: Integral a => a
+minutesPerHour :: (Integral a) => a
 minutesPerHour = 60
 
-hoursPerDay :: Integral a => a
+hoursPerDay :: (Integral a) => a
 hoursPerDay = 24
 
-daysPerWeek :: Integral a => a
+daysPerWeek :: (Integral a) => a
 daysPerWeek = 7
 
-approximateDaysPerMonth :: Integral a => a
+approximateDaysPerMonth :: (Integral a) => a
 approximateDaysPerMonth = 31
 
-approximateDaysPerYear :: Integral a => a
+approximateDaysPerYear :: (Integral a) => a
 approximateDaysPerYear = 365
